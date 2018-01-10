@@ -5,6 +5,8 @@
 #define CornerSize 10
 #define bColor 0x88888888 | amask 
 
+
+
 #define textCur '|'
 
 MZSDL_Button * MZSDL_AddButton(SDL_Renderer *ren,char * title, int fontSize, int x, int y)
@@ -157,7 +159,7 @@ void MZSDL_EnableButton(SDL_Renderer * ren,MZSDL_Button *button, int flag)
 {
 	int i;
  	Uint32 *pixels = (Uint32 *)button->surface->pixels;//convert void to Uint32 to use pixels variable
-	
+		
 	//if at the same mode nothing to do
 	if(button->active==flag)
 	{
@@ -979,6 +981,293 @@ void MZSDL_FreeRadioButton(MZSDL_RadioButton * rad)
 	}
 	free(rad->option);
 	free(rad);
+}
+
+MZSDL_CheckBox * MZSDL_CreateCheckBox(SDL_Renderer * ren, char **option, int size, int fontsize, int x, int y)
+{
+	MZSDL_CheckBox * box;
+	SDL_Surface ** textS;
+	SDL_Surface ** textF;
+	SDL_Rect r;
+	TTF_Font * font;
+	SDL_Color black={0,0,0};
+	Uint32 grey=0x77777777|amask;
+	int i,j,k;
+	int tx,tj;
+
+	box=(MZSDL_CheckBox *) malloc(sizeof(MZSDL_CheckBox));
+	if(box==NULL)
+	{
+		return 0;
+	}
+	textS=(SDL_Surface **) malloc(sizeof(SDL_Surface *)*size);
+	if(textS==NULL)
+	{
+		free(box);
+		return 0;
+	}
+	textF=(SDL_Surface **) malloc(sizeof(SDL_Surface *)*size);
+	if(textS==NULL)
+	{
+		free(box);
+		free(textS);
+		return 0;
+	}
+	font=TTF_OpenFont("arial.ttf",fontsize);
+	if(font==NULL)
+	{
+		free(box);
+		free(textS);
+		free(textF);
+		return 0;
+	}
+	for(i=0;i<size;i++)
+	{
+		textS[i]=TTF_RenderText_Blended(font,option[i],black);
+		if(textS[i]==NULL)
+		{
+			for(j=0;j<i;j++)
+			{
+				SDL_FreeSurface(textS[j]);
+			}
+			free(box);
+			free(textS);
+			free(textF);
+			TTF_CloseFont(font);
+			return 0;
+		}
+	}
+
+	TTF_CloseFont(font);
+	for(i=0;i<size;i++)
+	{
+		textF[i]=SDL_CreateRGBSurface(0,textS[i]->w + textS[i]->h+10,textS[i]->h,32,rmask,gmask,bmask,amask);
+		if(textF[i]==NULL)
+		{
+			for(j=0;j<i;j++)
+			{
+				SDL_FreeSurface(textF[j]);
+			}
+			for(i=0;i<size;i++)
+			{
+				SDL_FreeSurface(textS[i]);
+			}
+			free(box);
+			free(textS);
+			free(textF);
+			return 0;
+		}
+		r.h=textS[i]->h;
+		r.y=0;
+		r.w=textS[i]->w;
+		r.x=textS[i]->h +10;
+		SDL_BlitSurface(textS[i],NULL,textF[i],&r);
+
+
+		for(j=1;j<r.h;j++)
+		{
+			for(k=1;k<r.h;k++)
+			{
+				if(j==1 || k==1 || j==r.h-1 || k==r.h-1 )
+				{
+					MZSDL_PutPixel32(textF[i],j,k,amask);
+				}
+				else
+				{
+					MZSDL_PutPixel32(textF[i],j,k,0xffffffff);
+				}
+			}
+		}
+		for(j=2;j<r.h-1;j++)
+		{
+			for(k=0;k<3;k++)
+			{
+				if(j<3*r.h/8)
+				{
+					tj=r.h+j-3*r.h/8-k -1;
+					if(tj>1 && tj<r.h-1)
+					{
+						MZSDL_PutPixel32(textF[i],j,tj,grey);
+					}
+				}
+				tj=r.h-k-5*j/8;
+				if(tj>1 && tj<r.h-1)
+				{
+					MZSDL_PutPixel32(textF[i],tj,j,grey);
+				}
+			}
+		}
+	}
+
+	tx=0;
+	for(i=0;i<size;i++)
+	{
+		if(textF[i]->w>tx)
+		{
+			tx=textF[i]->w;
+		}
+	}
+	tj=textF[0]->h;
+	box->surface=SDL_CreateRGBSurface(0, tx, tj*size, 32, rmask, gmask, bmask, amask);
+	if(box->surface==NULL)
+	{
+		for(i=0;i<size;i++)
+		{
+			SDL_FreeSurface(textS[i]);
+			SDL_FreeSurface(textF[j]);
+		}
+		free(box);
+		free(textS);
+		free(textF);
+		return 0;
+	}
+
+	r.x=0;
+	r.h=tj;
+	for(i=0;i<size;i++)
+	{
+		r.w=textF[i]->w;
+		r.y=i*r.h;
+		SDL_BlitSurface(textF[i],NULL,box->surface,&r);
+	}
+
+	for(i=0;i<size;i++)
+	{
+		SDL_FreeSurface(textS[i]);
+		SDL_FreeSurface(textF[i]);
+	}
+	
+	free(textS);
+	free(textF);
+	box->texture=SDL_CreateTextureFromSurface(ren,box->surface);
+
+	if(box->texture==NULL)
+	{
+		SDL_FreeSurface(box->surface);
+		free(box);
+		return 0;
+	}
+	box->lineHeight=tj;
+	box->selected=(Uint8 *)malloc(sizeof(Uint8)*size);
+	if(box->selected==NULL)
+	{
+		SDL_FreeSurface(box->surface);
+		SDL_DestroyTexture(box->texture);
+		free(box);
+		return 0;
+	}
+
+	for(i=0;i<size;i++)
+	{
+		box->selected[i]=0;
+	}
+	box->size=size;
+	box->rect.h=box->surface->h;
+	box->rect.w=box->surface->w;
+	box->rect.x=x;
+	box->rect.y=y;
+
+	box->option=(char **) malloc(sizeof(char * )*size);
+	if(box->option==NULL)
+	{
+		SDL_FreeSurface(box->surface);
+		SDL_DestroyTexture(box->texture);
+		free(box->selected);
+		free(box);
+		return 0;
+	}
+	for(i=0;i<size;i++)
+	{
+		box->option[i]=(char *) malloc(sizeof(char)*(strlen(option[i])+1));
+		if(box->option[i]==NULL)
+		{
+			for(j=0;j<i;j++)
+			{
+				free(box->option[j]);
+			}
+			free(box->option);
+			free(box->selected);
+			SDL_DestroyTexture(box->texture);
+			SDL_FreeSurface(box->surface);
+			free(box);
+			return 0;
+		}
+		strcpy(box->option[i],option[i]);
+	}
+	return box;
+}
+
+void MZSDL_FreeCheckBox(MZSDL_CheckBox * box)
+{
+	int i;
+	SDL_FreeSurface(box->surface);
+	SDL_DestroyTexture(box->texture);
+	free(box->selected);
+	for(i=0;i<box->size;i++)
+	{
+		free(box->option[i]);
+	}
+	free(box->option);
+	free(box);
+}
+
+Sint8 MZSDL_CheckBoxClicked(MZSDL_CheckBox * box, int x,int y)
+{
+	if(x >box->rect.x && y > box->rect.y && x < box->rect.x + box->rect.w && y <box->rect.y + box->rect.h)
+	{
+		return (y-box->rect.y)/box->lineHeight;
+	}
+	else
+	{
+		return -1;
+	}
+}
+
+void MZSDL_UpdateCheckBox(SDL_Renderer *ren, MZSDL_CheckBox * box, Sint8 opt)
+{
+	int j,tj,k;
+	SDL_Texture * tex;
+	Uint32 color;
+
+	if(opt==-1)
+	{
+		return;
+	}
+	if(box->selected[opt]==0)
+	{
+		box->selected[opt]=1;
+		color=gmask | amask;
+	}
+	else
+	{
+		box->selected[opt]=0;
+		color=0x77777777 | amask;
+	}
+	for(j=2;j<box->lineHeight-1;j++)
+	{
+		for(k=0;k<3;k++)
+		{
+			if(j<3*box->lineHeight/8)
+			{
+				tj=box->lineHeight+j-3*box->lineHeight/8-k -1;
+				if(tj>1 && tj<box->lineHeight-1)
+				{
+					MZSDL_PutPixel32(box->surface,j,tj+opt*box->lineHeight,color);
+				}
+			}
+			tj=box->lineHeight-k-5*j/8;
+			if(tj>1 && tj<box->lineHeight-1)
+			{
+				MZSDL_PutPixel32(box->surface,tj,j+opt*box->lineHeight,color);
+			}
+		}
+	}
+	tex=SDL_CreateTextureFromSurface(ren,box->surface);
+	if(tex == NULL)
+	{
+		return;
+	}
+	box->texture=tex;
 }
 
 
