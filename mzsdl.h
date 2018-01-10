@@ -9,11 +9,13 @@
 #define gmask  0x00ff0000
 #define bmask  0x0000ff00
 #define amask  0x000000ff
+
 #else
 #define rmask  0x000000ff
 #define gmask  0x0000ff00
 #define bmask  0x00ff0000
 #define amask  0xff000000
+
 #endif
 
 /*
@@ -52,6 +54,19 @@ typedef struct {
 	SDL_Rect rect;
 	Uint8 size;
 } MZSDL_RadioButton;
+/*
+ * the struct of the check box
+ */
+
+typedef struct {
+	SDL_Texture * texture;
+	SDL_Surface * surface;
+	Uint8 lineHeight;
+	Uint8 * selected;
+	char ** option;
+	SDL_Rect rect;
+	Uint8 size;
+} MZSDL_CheckBox;
 
 /*
  * MZSDL_AddButton : to create new button
@@ -136,7 +151,7 @@ void MZSDL_EditInputBox(SDL_Renderer *ren, MZSDL_InputBox * box,int flag);
 char * MZSDL_GetTextFromInputBox(MZSDL_InputBox * box);
 
 /*
- * MZSDL_CreateRadioButton : to create a radio button with many choices
+ * MZSDL_CreateRadioButton : to create a radio button with many choices to let user choose one
  * ren : the renderer used in the project
  * option : array of the options text
  * size : the count of the options
@@ -163,10 +178,43 @@ Sint8 MZSDL_RadioButtonClicked(MZSDL_RadioButton * rad, int x,int y);
 void MZSDL_UpdateRadioButton(SDL_Renderer * ren, MZSDL_RadioButton * rad, Sint8 opt );
 
 /*
- * MZSDL_FreeRadioButton : to fre the radio button
+ * MZSDL_FreeRadioButton : to free the radio button
  * rad : the pointer of the radio button
  */
 void MZSDL_FreeRadioButton(MZSDL_RadioButton * rad);
+
+/*
+ * MZSDL_CreateCheckBox : to create a check box to let user to choose multiple options
+ * ren : the renderer used in the project
+ * option : is an array of options text name
+ * size : the count of the options
+ * fontsize : the size of the font
+ * x & y : the position of the check box
+ * returned value : the pointer to the created check box, or 0 if fail
+ */
+MZSDL_CheckBox * MZSDL_CreateCheckBox(SDL_Renderer * ren, char **option, int size, int fontsize, int x, int y);
+
+/*
+ * MZSDL_FreeCheckBox : to free the check box
+ * box : the pointer to the check box
+ */
+void MZSDL_FreeCheckBox(MZSDL_CheckBox * box);
+
+/*
+ * MZSDL_CheckBoxClicked : to check if the check box was clicked and determine which option
+ * box : the pointer to the check box
+ * x & y : the position of the mouse where the mouse was clicked
+ * returned value : the value of the clicked option, or -1 if not clicked
+ */
+Sint8 MZSDL_CheckBoxClicked(MZSDL_CheckBox * box, int x, int y);
+
+/*
+ * MZSDL_UpdateCheckBox : to select or deselect the option 
+ * ren : the renderer used in the project
+ * box : the pointer of the check box
+ * opt : the index of the option
+ */
+void MZSDL_UpdateCheckBox(SDL_Renderer * ren, MZSDL_CheckBox * box, Sint8 opt);
 
 /*
  * MZSDL_PutPixel32 : to put a pixel of 32 bit on the surface
