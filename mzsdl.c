@@ -1,9 +1,9 @@
 #include "mzsdl.h"
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_ttf.h>
+#include <SDL.h>
+#include <SDL_ttf.h>
 
 #define CornerSize 10
-#define bColor 0x88888888 | amask 
+#define bColor 0x88888888 | amask
 
 
 
@@ -54,8 +54,8 @@ MZSDL_Button * MZSDL_AddButton(SDL_Renderer *ren,char * title, int fontSize, int
 		return 0;
 	}
 	//fill the background by a solid color
-	SDL_FillRect(surface, NULL, SDL_MapRGB(surface->format,0xaa,0xaa,0xaa));
-	
+	SDL_FillRect(surface, NULL, SDL_MapRGB(surface->format,0xee,0xee,0xee));
+
 	//draw black edges
 	for(i=0;i<w+20;i++)
 	{
@@ -99,7 +99,7 @@ MZSDL_Button * MZSDL_AddButton(SDL_Renderer *ren,char * title, int fontSize, int
 			{
 				MZSDL_PutPixel32(surface, i, j, amask);
 			}
-			
+
 		}
 	}
 	//left bottom corner
@@ -159,7 +159,7 @@ void MZSDL_EnableButton(SDL_Renderer * ren,MZSDL_Button *button, int flag)
 {
 	int i;
  	Uint32 *pixels = (Uint32 *)button->surface->pixels;//convert void to Uint32 to use pixels variable
-		
+
 	//if at the same mode nothing to do
 	if(button->active==flag)
 	{
@@ -168,7 +168,7 @@ void MZSDL_EnableButton(SDL_Renderer * ren,MZSDL_Button *button, int flag)
 	if(flag == 0)//for disable
 	{
 		for(i=0;i<button->surface->w*button->surface->h;i++)
-		{	
+		{
 			//if alpha not null
 			if(pixels[i] & amask)
 			{
@@ -188,9 +188,23 @@ void MZSDL_EnableButton(SDL_Renderer * ren,MZSDL_Button *button, int flag)
 			}
 		}
 	}
+	button->active=flag;
 	//destroy old texture and create new one
 	SDL_DestroyTexture(button->texture);
 	button->texture=SDL_CreateTextureFromSurface(ren,button->surface);
+}
+
+int MZSDL_ButtonClicked(MZSDL_Button * button, int x, int y)
+{
+     if(x>=button->rect.x && y>=button->rect.y && \
+			 x<=button->rect.x+button->rect.w && y<=button->rect.y + button->rect.h)
+	 {
+		 return 1;
+	 }
+	 else
+	 {
+		 return 0;
+	 }
 }
 
 void MZSDL_FreeButton(MZSDL_Button * button)
@@ -211,7 +225,7 @@ MZSDL_InputBox * MZSDL_CreateInputBox(SDL_Renderer * ren, char * title, int font
 	SDL_Color grey= {0x88,0x88,0x88};//grey color
 	SDL_Rect r;
 	int i;
-	
+
 	//initailize the structure of the input box
 	inbox= (MZSDL_InputBox *) malloc(sizeof(MZSDL_InputBox));
 	if(inbox == NULL)
@@ -249,7 +263,7 @@ MZSDL_InputBox * MZSDL_CreateInputBox(SDL_Renderer * ren, char * title, int font
 	//calculate the surface height and width for rect
 	r.w=textS->w;
 	r.h=textS->h;
-	//create the background surface 
+	//create the background surface
 	bgS = SDL_CreateRGBSurface(0,length,r.h + 10, 32, rmask, gmask, bmask, amask);
 	if(bgS == NULL)
 	{
@@ -257,7 +271,7 @@ MZSDL_InputBox * MZSDL_CreateInputBox(SDL_Renderer * ren, char * title, int font
 		SDL_FreeSurface(textS);
 		return 0;
 	}
-	//create the another surface 
+	//create the another surface
 	bgS2 = SDL_CreateRGBSurface(0, length, r.h +10 , 32, rmask, gmask, bmask, amask);
 	if(bgS2 == NULL)
 	{
@@ -269,7 +283,7 @@ MZSDL_InputBox * MZSDL_CreateInputBox(SDL_Renderer * ren, char * title, int font
 
 	//fill the border gray color for not active state and a white body
 	SDL_FillRect(bgS, NULL, SDL_MapRGB(bgS->format,0xff,0xff,0xff));
-	
+
 	//horizontal borders
 	for(i=0;i<length;i++)
 	{
@@ -282,7 +296,7 @@ MZSDL_InputBox * MZSDL_CreateInputBox(SDL_Renderer * ren, char * title, int font
 		MZSDL_PutPixel32(bgS, 0, i, bColor);//left
 		MZSDL_PutPixel32(bgS, length-1, i, bColor);//right
 	}
-	// copy the surface 
+	// copy the surface
 	SDL_BlitSurface(bgS, NULL, bgS2, NULL);
 
 	//copy the data
@@ -296,7 +310,7 @@ MZSDL_InputBox * MZSDL_CreateInputBox(SDL_Renderer * ren, char * title, int font
 	r.x=5;
 	r.y=5;
 	SDL_BlitSurface(textS,NULL,bgS2,&r);
-	//set text with zeros 
+	//set text with zeros
 	memset(inbox->text,0,256);
 	inbox->curPos=0;//cursor start at zero
 
@@ -352,7 +366,7 @@ int MZSDL_EnableInputBox(SDL_Renderer *ren, MZSDL_InputBox * box, Uint8 mode)
 		strcpy(buf,box->text+box->curPos+1);
 		memset(box->text+box->curPos,0,strlen(buf)+1);
 		strcat(box->text,buf);
-		
+
 		//if no text print the title of the input box
 		if(strlen(box->text)==0)
 		{
@@ -361,7 +375,7 @@ int MZSDL_EnableInputBox(SDL_Renderer *ren, MZSDL_InputBox * box, Uint8 mode)
 			{
 				return 0;
 			}
-			textS=TTF_RenderText_Blended(font,box->title,grey);//create the title surface 
+			textS=TTF_RenderText_Blended(font,box->title,grey);//create the title surface
 			TTF_CloseFont(font);
 			if(textS==NULL)
 			{
@@ -442,7 +456,7 @@ int MZSDL_EnableInputBox(SDL_Renderer *ren, MZSDL_InputBox * box, Uint8 mode)
 				SDL_FreeSurface(bg2);
 				return 0;
 			}
-			
+
 			SDL_FreeSurface(bg2);
 			box->active=0;
 			return 1;
@@ -472,7 +486,7 @@ int MZSDL_EnableInputBox(SDL_Renderer *ren, MZSDL_InputBox * box, Uint8 mode)
 		//add the cursor at the end and get the cursor location
 		box->text[strlen(box->text)]=textCur;
 		box->curPos=strlen(box->text)-1;
-		//create the text surface 
+		//create the text surface
 		textS=TTF_RenderText_Blended(font,box->text,black);
 		TTF_CloseFont(font);
 		if(textS==NULL)
@@ -489,12 +503,12 @@ int MZSDL_EnableInputBox(SDL_Renderer *ren, MZSDL_InputBox * box, Uint8 mode)
 		bg2=SDL_CreateRGBSurface(0,box->rect.w,box->rect.h,32,rmask,gmask,bmask,amask);
 		if(bg2==NULL)
 		{
-			SDL_FreeSurface(textS);	
+			SDL_FreeSurface(textS);
 		}
 		SDL_BlitSurface(box->bg,NULL,bg2,NULL);//copy all pixels
 		r.x=5;
 		r.y=5;
-		//if the width of the text greater the the width of box 
+		//if the width of the text greater the the width of box
 		//we should render the last part pf the text only
 		if(r.w>=box->rect.w)
 		{
@@ -526,7 +540,7 @@ int MZSDL_EnableInputBox(SDL_Renderer *ren, MZSDL_InputBox * box, Uint8 mode)
 }
 int MZSDL_UpdateInputBox(SDL_Renderer * ren, MZSDL_InputBox * box, char *text)
 {
-	SDL_Surface * bg2;//another background surface 
+	SDL_Surface * bg2;//another background surface
 	SDL_Texture * textT;
 	TTF_Font * font;
 	SDL_Color black={0,0,0};
@@ -534,7 +548,7 @@ int MZSDL_UpdateInputBox(SDL_Renderer * ren, MZSDL_InputBox * box, char *text)
 	char buf[256];
 
 	if(box->text[box->curPos+1]==0)//if the cursor at the end of the text
-	{	
+	{
 		box->text[box->curPos]=0;//remove cursor
 		strcat(box->text,text);//add the text at the end
 		box->text[strlen(box->text)]=textCur;//add cursor
@@ -609,7 +623,7 @@ int MZSDL_InputBoxClicked(MZSDL_InputBox * box, int x, int y)
 	 {
 		 return 1;
 	 }
-	 else 
+	 else
 	 {
 		 return 0;
 	 }
@@ -624,7 +638,7 @@ void MZSDL_EditInputBox(SDL_Renderer * ren, MZSDL_InputBox * box, int flag)
 	SDL_Rect r,r2;
 	SDL_Texture * textT;
 	SDL_Surface * bg2;
-	
+
 	//if the user press backspace and we have text in the box
 	if(flag== SDLK_BACKSPACE && box->curPos>0)
 	{
@@ -713,7 +727,7 @@ MZSDL_RadioButton * MZSDL_CreateRadioButton(SDL_Renderer * ren, char **option, i
 	Uint32 LightGrey=0xBBBBBBBB | amask;
 	Uint32 green= amask | gmask | (0x33333333 &(rmask | bmask ));
 	TTF_Font * font;
-	
+
 	//should be two or more choice
 	if(size<2)
 	{
@@ -932,7 +946,7 @@ Sint8 MZSDL_RadioButtonClicked(MZSDL_RadioButton * rad, int x,int y)
 		return (y-rad->rect.y)/rad->lineHeight;
 	}
 	else
-	{	
+	{
 		return -1;
 	}
 }
@@ -1136,7 +1150,7 @@ MZSDL_CheckBox * MZSDL_CreateCheckBox(SDL_Renderer * ren, char **option, int siz
 		SDL_FreeSurface(textS[i]);
 		SDL_FreeSurface(textF[i]);
 	}
-	
+
 	free(textS);
 	free(textF);
 	box->texture=SDL_CreateTextureFromSurface(ren,box->surface);
@@ -1272,9 +1286,9 @@ void MZSDL_UpdateCheckBox(SDL_Renderer *ren, MZSDL_CheckBox * box, Sint8 opt)
 
 
 void MZSDL_PutPixel32( SDL_Surface *surface, int x, int y, Uint32 pixel )
-{ 
-	//Convert the pixels to 32 bit 
-	Uint32 *pixels = (Uint32 *)surface->pixels; 
-	//Set the pixel 
-	pixels[ ( y * surface->w ) + x ] = pixel; 
+{
+	//Convert the pixels to 32 bit
+	Uint32 *pixels = (Uint32 *)surface->pixels;
+	//Set the pixel
+	pixels[ ( y * surface->w ) + x ] = pixel;
 }
