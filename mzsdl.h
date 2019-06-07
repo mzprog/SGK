@@ -1,7 +1,7 @@
 #ifndef _MZSDL_H_
 #define _MZSDL_H_
 
-#include <SDL2/SDL.h>
+#include <SDL.h>
 
 
 #if SDL_BYTEORDER == SDL_BIG_ENDIAN
@@ -87,6 +87,13 @@ MZSDL_Button * MZSDL_AddButton(SDL_Renderer *ren, char * title, int fontSize, in
 void MZSDL_EnableButton(SDL_Renderer * ren,MZSDL_Button * button, int flag);
 
 /*
+ * MZSDL_ButtonClicked : to check if the button is clicked by mouse
+ * x & y : the position of the mouse clicking
+ * return : 1 if true , 0 if false
+ */
+int MZSDL_ButtonClicked(MZSDL_Button * button, int x, int y);
+
+/*
  * MZSDL_FreeButton : to free a button
  * button : the button to free it
  */
@@ -123,7 +130,7 @@ void MZSDL_FreeInputBox(MZSDL_InputBox * box);
  * MZSDL_UpdateInputBox : to add text for the input box
  * ren : the renderer that used in the project
  * box : the input box that will be changed
- * text : the text that scanned from user to add to the input box 
+ * text : the text that scanned from user to add to the input box
  * returned value: 1 if succeed 0 if fail
  */
 int MZSDL_UpdateInputBox(SDL_Renderer * ren, MZSDL_InputBox * box, char *text);
@@ -209,7 +216,7 @@ void MZSDL_FreeCheckBox(MZSDL_CheckBox * box);
 Sint8 MZSDL_CheckBoxClicked(MZSDL_CheckBox * box, int x, int y);
 
 /*
- * MZSDL_UpdateCheckBox : to select or deselect the option 
+ * MZSDL_UpdateCheckBox : to select or deselect the option
  * ren : the renderer used in the project
  * box : the pointer of the check box
  * opt : the index of the option
