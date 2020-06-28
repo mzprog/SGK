@@ -1,6 +1,6 @@
 #include "mzsdl.h"
-#include <SDL.h>
-#include <SDL_ttf.h>
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_ttf.h>
 
 #define CornerSize 10
 #define bColor 0x88888888 | amask
@@ -26,13 +26,16 @@ MZSDL_Button * MZSDL_AddButton(SDL_Renderer *ren,char * title, int fontSize, int
 	{
 		return 0;
 	}
+
 	//open the font
-	font=TTF_OpenFont("./arial.ttf",fontSize);
+	font=TTF_OpenFont("arial.ttf",fontSize);
 	if(font == NULL)
 	{
+        printf("%s\n",TTF_GetError());
 		free(box);
 		return 0;
 	}
+ 
 	//create the font surface and close the font
 	textS= TTF_RenderText_Blended(font,title,black);
 	TTF_CloseFont(font);
@@ -42,6 +45,7 @@ MZSDL_Button * MZSDL_AddButton(SDL_Renderer *ren,char * title, int fontSize, int
 		free(box);
 		return 0;
 	}
+
 	//calculate the height and width of the text surface
 	w=textS->w;
 	h=textS->h;
@@ -53,6 +57,7 @@ MZSDL_Button * MZSDL_AddButton(SDL_Renderer *ren,char * title, int fontSize, int
 		SDL_FreeSurface(textS);
 		return 0;
 	}
+ 
 	//fill the background by a solid color
 	SDL_FillRect(surface, NULL, SDL_MapRGB(surface->format,0xee,0xee,0xee));
 
@@ -172,7 +177,7 @@ void MZSDL_EnableButton(SDL_Renderer * ren,MZSDL_Button *button, int flag)
 			//if alpha not null
 			if(pixels[i] & amask)
 			{
-				pixels[i]= pixels[i]&(~amask) | (0x77777777 & (amask) );
+				pixels[i]= (pixels[i]&(~amask)) | (0x77777777 & (amask) );
 			}
 
 		}
