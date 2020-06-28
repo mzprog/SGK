@@ -1,7 +1,14 @@
 #ifndef _MZSDL_H_
 #define _MZSDL_H_
 
+#ifdef __linux
+
+#include <SDL2/SDL.h>
+
+#else
 #include <SDL.h>
+
+#endif
 
 
 #if SDL_BYTEORDER == SDL_BIG_ENDIAN
