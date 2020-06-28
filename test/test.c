@@ -128,7 +128,7 @@ int main(int argc, char ** argv)
     
     
 
-
+    TTF_Quit();
 	SDL_Quit();
 
 	return 0;
