@@ -14,7 +14,12 @@ int main(int argc, char ** argv)
     SDL_Window * window= NULL;
     SDL_Renderer * ren=NULL;
     SDL_Event event;
+    int x,y;//for mouse position
     
+    char * radioOpt[]={"firt","second","selected","option"};
+    char * checkOpt[]={"Another","options","to show"};
+
+
     //aditional 
     SDL_Texture *texture = NULL;
     SDL_Surface *surf = NULL;
@@ -90,6 +95,10 @@ int main(int argc, char ** argv)
         puts("btm init error");
         return -1;
     }
+
+    MZSDL_InputBox * inp = MZSDL_CreateInputBox(ren,"input box",18,200,100,100);
+    MZSDL_RadioButton * rdb = MZSDL_CreateRadioButton(ren,radioOpt,4,2,18,100,300);
+    MZSDL_CheckBox * chb = MZSDL_CreateCheckBox(ren, checkOpt,3,18,100,400);
     
 
  
@@ -106,6 +115,7 @@ int main(int argc, char ** argv)
     SDL_RenderCopy(ren,texture,NULL,NULL);
 
     SDL_RenderCopy(ren,btn->texture, NULL, NULL);
+
  
     SDL_RenderPresent(ren);
 
@@ -118,10 +128,46 @@ int main(int argc, char ** argv)
             {
                 QUIT = 1;
             }
+            else if(event.type == SDL_MOUSEBUTTONDOWN)
+            {
+                SDL_GetMouseState(&x,&y);
+
+                if(MZSDL_InputBoxClicked(inp,x,y))
+                {
+                    MZSDL_EnableInputBox(ren,inp,1);
+                }
+                else
+                {
+                    MZSDL_EnableInputBox(ren,inp,0);
+                }
+                
+                //if selected it will be updated else no effect
+                MZSDL_UpdateRadioButton(ren,rdb,MZSDL_RadioButtonClicked(rdb,x,y));
+                MZSDL_UpdateCheckBox(ren,chb,MZSDL_CheckBoxClicked(chb,x,y));
+            }
+            else if(event.type == SDL_TEXTINPUT)
+            {
+                if(inp->active)
+                {
+                    MZSDL_UpdateInputBox(ren,inp, event.text.text);
+                }
+            }
+            else if(event.type ==SDL_KEYDOWN)
+            {
+                if(event.key.keysym.sym == SDLK_BACKSPACE)
+                {
+                    MZSDL_EditInputBox(ren,inp,event.key.keysym.sym);
+                }
+            }
         }
+
         SDL_RenderClear(ren);
         SDL_RenderCopy(ren,texture,NULL,NULL);
         SDL_RenderCopy(ren,btn->texture, NULL, &btn->rect);
+        SDL_RenderCopy(ren,inp->texture, NULL, &inp->rect);
+        SDL_RenderCopy(ren,rdb->texture, NULL, &rdb->rect);
+        SDL_RenderCopy(ren,chb->texture, NULL, &chb->rect);
+        
         SDL_RenderPresent(ren);
     }
     
