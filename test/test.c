@@ -73,6 +73,24 @@ int main(int argc, char ** argv)
         puts("texture init error");
         return -1;
     }
+
+    //adding icon for fun
+    SDL_Surface * iconS;
+    Uint16 pixels[16*16];
+
+    for(x=0;x<16;x++)
+    {
+	    for(y=0;y<16;y++)
+	    {
+		    pixels[x*y]=0;
+		    pixels[x*y] =x * 0x0010;
+		    pixels[x*y]+=y * 0x0101;
+		    pixels[x*y]+=    0xf000;
+	    }
+    }
+
+    iconS = SDL_CreateRGBSurfaceFrom(pixels,16,16,16,32,0x0f00,0x00f0,0x000f,0xf000);
+    SDL_SetWindowIcon(window,iconS);
     
     
     
