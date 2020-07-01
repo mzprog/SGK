@@ -1,6 +1,6 @@
 #include "mzsdl.h"
-#include <SDL.h>
-#include <SDL_ttf.h>
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_ttf.h>
 
 #define CornerSize 10
 #define bColor 0x88888888 | amask

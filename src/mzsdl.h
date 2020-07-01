@@ -1,20 +1,33 @@
 #ifndef _MZSDL_H_
 #define _MZSDL_H_
 
-#include <SDL.h>
+#include <SDL2/SDL.h>
 
 
 #if SDL_BYTEORDER == SDL_BIG_ENDIAN
+
 #define rmask  0xff000000
 #define gmask  0x00ff0000
 #define bmask  0x0000ff00
 #define amask  0x000000ff
 
+#define rshift 24
+#define gshift 16
+#define bshift 8
+#define ashift 0
+
+
 #else
+
 #define rmask  0x000000ff
 #define gmask  0x0000ff00
 #define bmask  0x00ff0000
 #define amask  0xff000000
+
+#define rshift 0
+#define gshift 8
+#define bshift 16
+#define ashift 24
 
 #endif
 
