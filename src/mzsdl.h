@@ -1,7 +1,7 @@
 #ifndef _MZSDL_H_
 #define _MZSDL_H_
 
-#include <SDL2/SDL.h>
+#include <SDL2/SDL.h>//or maybe you should remove 'SDL2'
 
 
 #if SDL_BYTEORDER == SDL_BIG_ENDIAN

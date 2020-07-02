@@ -26,13 +26,16 @@ MZSDL_Button * MZSDL_AddButton(SDL_Renderer *ren,char * title, int fontSize, int
 	{
 		return 0;
 	}
+
 	//open the font
-	font=TTF_OpenFont("./arial.ttf",fontSize);
+	font=TTF_OpenFont("arial.ttf",fontSize);
 	if(font == NULL)
 	{
+        printf("%s\n",TTF_GetError());
 		free(box);
 		return 0;
 	}
+ 
 	//create the font surface and close the font
 	textS= TTF_RenderText_Blended(font,title,black);
 	TTF_CloseFont(font);
@@ -42,6 +45,7 @@ MZSDL_Button * MZSDL_AddButton(SDL_Renderer *ren,char * title, int fontSize, int
 		free(box);
 		return 0;
 	}
+
 	//calculate the height and width of the text surface
 	w=textS->w;
 	h=textS->h;
@@ -53,6 +57,7 @@ MZSDL_Button * MZSDL_AddButton(SDL_Renderer *ren,char * title, int fontSize, int
 		SDL_FreeSurface(textS);
 		return 0;
 	}
+ 
 	//fill the background by a solid color
 	SDL_FillRect(surface, NULL, SDL_MapRGB(surface->format,0xee,0xee,0xee));
 
@@ -172,7 +177,7 @@ void MZSDL_EnableButton(SDL_Renderer * ren,MZSDL_Button *button, int flag)
 			//if alpha not null
 			if(pixels[i] & amask)
 			{
-				pixels[i]= pixels[i]&(~amask) | (0x77777777 & (amask) );
+				pixels[i]= (pixels[i]&(~amask)) | (0x77777777 & (amask) );
 			}
 
 		}
@@ -1009,6 +1014,7 @@ MZSDL_CheckBox * MZSDL_CreateCheckBox(SDL_Renderer * ren, char **option, int siz
 	int i,j,k;
 	int tx,tj;
 
+    //alocating data
 	box=(MZSDL_CheckBox *) malloc(sizeof(MZSDL_CheckBox));
 	if(box==NULL)
 	{
@@ -1035,6 +1041,8 @@ MZSDL_CheckBox * MZSDL_CreateCheckBox(SDL_Renderer * ren, char **option, int siz
 		free(textF);
 		return 0;
 	}
+	
+	//create surfaces for options
 	for(i=0;i<size;i++)
 	{
 		textS[i]=TTF_RenderText_Blended(font,option[i],black);
@@ -1051,8 +1059,9 @@ MZSDL_CheckBox * MZSDL_CreateCheckBox(SDL_Renderer * ren, char **option, int siz
 			return 0;
 		}
 	}
-
 	TTF_CloseFont(font);
+    
+    
 	for(i=0;i<size;i++)
 	{
 		textF[i]=SDL_CreateRGBSurface(0,textS[i]->w + textS[i]->h+10,textS[i]->h,32,rmask,gmask,bmask,amask);
@@ -1077,7 +1086,7 @@ MZSDL_CheckBox * MZSDL_CreateCheckBox(SDL_Renderer * ren, char **option, int siz
 		r.x=textS[i]->h +10;
 		SDL_BlitSurface(textS[i],NULL,textF[i],&r);
 
-
+        //draw rectengle with border
 		for(j=1;j<r.h;j++)
 		{
 			for(k=1;k<r.h;k++)
