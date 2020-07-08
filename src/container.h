@@ -93,9 +93,11 @@ typedef struct{
 
 MZSDL_Container* MZSDL_InitContainer(SDL_Renderer* ren, int layout, SDL_Rect* rect);
 
-int MZSDL_ContainerAddNode(MZSDL_Container *cont,void * node, int type);
+MZSDL_ContElements * MZSDL_ContainerAddElement(MZSDL_Container *cont,void * node, int type);
 int MZSDL_ContainerBuild(MZSDL_Container * cont);
 int SGK_LinearLayoutBuild(MZSDL_Container * cont);
+
+void SGK_DestroyContainer(MZSDL_Container * cont);
 
 
 #endif 

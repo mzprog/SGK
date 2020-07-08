@@ -67,12 +67,16 @@ int main(int argc, char *argv[])
     MZSDL_InputBox * inp = MZSDL_CreateInputBox(ren,"input box",18,200,100,100);
     
     MZSDL_Container * container=MZSDL_InitContainer(ren,SGK_LINEARLAYOUT,NULL);
-    if(MZSDL_ContainerAddNode(container,btn,SGK_TYPE_BUTTON)==0)
+    
+    MZSDL_ContElements * btnElem = MZSDL_ContainerAddElement(container,btn,SGK_TYPE_BUTTON);
+    if(btnElem==NULL)
     {
         puts("cant add node btn");
         return -1;
     }
-    if(MZSDL_ContainerAddNode(container,inp,SGK_TYPE_INPUTBOX)==0)
+    btnElem->align=SGK_ALIGNLEFT;
+    
+    if(MZSDL_ContainerAddElement(container,inp,SGK_TYPE_INPUTBOX)==NULL)
     {
         puts("cant add node inp");
         return -1;
@@ -99,6 +103,13 @@ int main(int argc, char *argv[])
 
         SDL_RenderPresent(ren);
     }
+
+    SGK_DestroyContainer(container);
+  
+    SDL_DestroyRenderer(ren);
+    SDL_DestroyWindow(window);
+   
+    
     TTF_Quit();
 	SDL_Quit();
     

@@ -79,17 +79,17 @@ SDL_Surface ** SGK_PR_GetSurface(void * node, int type)//private function to get
     }
 }
 
-int MZSDL_ContainerAddNode(MZSDL_Container *cont,void * node, int type)
+MZSDL_ContElements *  MZSDL_ContainerAddElement(MZSDL_Container *cont,void * node, int type)
 {
     MZSDL_ContElements *cur=NULL;
     MZSDL_ContElements * elem = (MZSDL_ContElements *)calloc(1, sizeof(MZSDL_ContElements));
     if(elem ==NULL)
     {
-        return 0;
+        return NULL;
     }
     if(node ==NULL)
     {
-        return 0;
+        return NULL;
     }
     
     elem->element=node;
@@ -120,7 +120,7 @@ int MZSDL_ContainerAddNode(MZSDL_Container *cont,void * node, int type)
     
     cont->elementCount++;
     
-    return 1;
+    return elem;
 }
 
 int MZSDL_ContainerBuild(MZSDL_Container * cont)
@@ -372,6 +372,52 @@ int SGK_LinearLayoutBuild(MZSDL_Container * cont)
     return 1;
 }
 
+void SGK_DestroyContainer(MZSDL_Container * cont)
+{
+    MZSDL_ContElements * elem;
+    MZSDL_ContElements * tmp;
+    
+    if(cont==NULL)
+    {
+        return;
+    }
+    
+    SDL_FreeSurface(cont->DispSurface);
+    SDL_FreeSurface(cont->surface);
+    
+    SDL_DestroyTexture(cont->texture);
+    
+    if(cont->layout == SGK_LINEARLAYOUT)
+    {
+        free(cont->spacer.linear);
+    }
+  
+    elem= cont->elements;
+    
+    while(elem)
+    {
+       puts("ss"); 
+        switch(elem->type)
+        {
+            case SGK_TYPE_BUTTON:
+                MZSDL_FreeButton(elem->element);break;
+            case SGK_TYPE_CHECKBOK:
+                MZSDL_FreeCheckBox(elem->element);break;
+            case SGK_TYPE_INPUTBOX:
+                MZSDL_FreeInputBox(elem->element);break;
+            case SGK_TYPE_RADIOBOX:
+                MZSDL_FreeRadioButton(elem->element);break;
+            case SGK_TYPE_CONTAINER:
+                SGK_DestroyContainer(elem->element);break;
+        }
+
+        
+        tmp=elem;
+        elem=elem->next;
+        free(tmp);   
+    }
+    
+}
 
 
 
