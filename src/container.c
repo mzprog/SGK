@@ -257,7 +257,12 @@ int SGK_LinearLayoutBuild(MZSDL_Container * cont)
             {
                 return 0;
             }
-            //SDL_FillRect(cont->surface,&clipRect,0xffffffff);
+            //copy the rect to the struct
+            cur->rect->x=clipRect.x;
+            cur->rect->y=clipRect.y;
+            cur->rect->w=clipRect.w;
+            cur->rect->h=clipRect.h;
+            
             if(SDL_BlitSurface(*cur->surface,NULL,cont->surface,&clipRect)!=0)
             {
                 return 0;
@@ -368,6 +373,10 @@ int SGK_LinearLayoutBuild(MZSDL_Container * cont)
         puts("no texture");
         return 0;
     }
+    cont->DispRect.x=clipRect.x;
+    cont->DispRect.y=clipRect.y;
+    cont->DispRect.w=clipRect.w;
+    cont->DispRect.h=clipRect.h;
     
     return 1;
 }
@@ -418,8 +427,100 @@ void SGK_DestroyContainer(MZSDL_Container * cont)
     
 }
 
+int SGK__PR_ElementClicked(MZSDL_ContElements * e, int x, int y)
+{
+	 if(x>=e->rect->x && y>=e->rect->y && \
+			 x<=e->rect->x+e->rect->w && y<=e->rect->y + e->rect->h)
+	 {
+		 return 1;
+	 }
+	 else
+	 {
+		 return 0;
+	 }
 
+}
 
+int SGK_PR_UpdateContainerDisplay(MZSDL_Container * cont)
+{
+
+    SDL_BlitSurface(cont->surface,NULL,cont->DispSurface,&cont->DispRect);
+    //create texture
+    cont->texture = SDL_CreateTextureFromSurface(cont->render,cont->DispSurface);
+    if(cont->texture ==NULL)
+    {
+        puts("no texture");
+        return 0;
+    }
+    
+    return 1;
+}
+
+int SGK_Events_MouseDown(MZSDL_Container * cont,int x,int y)
+{
+    MZSDL_ContElements * elem;
+    char update = 0;//boolean varaible to check if we should update the container texture
+    if(cont->rect.x > x || cont->rect.x + cont->rect.w < x)
+    {
+        return 0;
+    }
+    if(cont->rect.y > y || cont->rect.y + cont->rect.h < y)
+    {
+        return 0;
+    }   
+    //TODO after adding event we should check cont->OnClick()
+
+    /*
+     * reset the x & y ,with respect to cont position
+     * NOTICE we should pay attention later for scrolling 
+     */
+    x= x - cont->rect.x;
+    y= y - cont->rect.y;
+    
+    //check event nodes
+    elem = cont->elements;
+    while(elem)
+    {
+        if(SGK__PR_ElementClicked(elem,x,y))
+        {
+            //do system events
+            switch(elem->type)
+            {
+                case SGK_TYPE_BUTTON:
+puts("button");                    
+                    break;
+                case SGK_TYPE_CHECKBOK:
+                    
+                    break;
+                case SGK_TYPE_INPUTBOX:
+                    MZSDL_EnableInputBox(cont->render,elem->element,1);
+                    //NOTICE add the input box to global varible to disable it when clicked on different part
+                    update = 1;
+                    break;
+                case SGK_TYPE_RADIOBOX:
+                    
+                    break;
+                case SGK_TYPE_CONTAINER:
+                    SGK_Events_MouseDown(elem->element,x,y);
+            }
+            //TODO do user events
+            
+            
+            //final for update
+            if(update)
+            {
+                SDL_BlitSurface(*elem->surface,NULL,cont->surface,elem->rect);
+                SGK_PR_UpdateContainerDisplay(cont);
+            }
+            return 1;
+        }
+        else
+        {
+            elem=elem->next;
+        }
+    }
+    
+}
 
 
 

@@ -72,6 +72,7 @@ typedef union spacer
 typedef struct{
     SDL_Rect rect;
     SDL_Surface * surface;
+    SDL_Rect DispRect;
     SDL_Surface * DispSurface;
     SDL_Texture * texture;
     SDL_Renderer * render;
@@ -98,6 +99,8 @@ int MZSDL_ContainerBuild(MZSDL_Container * cont);
 int SGK_LinearLayoutBuild(MZSDL_Container * cont);
 
 void SGK_DestroyContainer(MZSDL_Container * cont);
+
+int SGK_Events_MouseDown(MZSDL_Container * cont,int x,int y);
 
 
 #endif 

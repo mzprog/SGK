@@ -348,11 +348,13 @@ int MZSDL_EnableInputBox(SDL_Renderer *ren, MZSDL_InputBox * box, Uint8 mode)
 	SDL_Color grey={0x88,0x88,0x88};
 	SDL_Color black={0,0,0};
 	char buf[256];
+
 	//if the same mode nothing to do
 	if(box->active == mode)
 	{
 		return 1;
 	}
+
 	if(mode == 0)
 	{
 		//draw grey color for the border
@@ -464,7 +466,9 @@ int MZSDL_EnableInputBox(SDL_Renderer *ren, MZSDL_InputBox * box, Uint8 mode)
 				return 0;
 			}
 
-			SDL_FreeSurface(bg2);
+			//SDL_FreeSurface(bg2);
+			SDL_FreeSurface(box->surface);
+            box->surface=bg2;
 			box->active=0;
 			return 1;
 
@@ -533,7 +537,9 @@ int MZSDL_EnableInputBox(SDL_Renderer *ren, MZSDL_InputBox * box, Uint8 mode)
 		//destroy the texture and create new one and free surface and return
 		SDL_DestroyTexture(box->texture);
 		box->texture=SDL_CreateTextureFromSurface(ren,bg2);
-		SDL_FreeSurface(bg2);
+		//SDL_FreeSurface(bg2);
+        SDL_FreeSurface(box->surface);
+        box->surface = bg2;
 		if(box->texture==NULL)
 		{
 			return 0;

@@ -97,7 +97,13 @@ int main(int argc, char *argv[])
             {
                 QUIT = 1;
             }
+            else if(event.type == SDL_MOUSEBUTTONDOWN)
+            {
+                SDL_GetMouseState(&x,&y);
+                SGK_Events_MouseDown(container,x,y);
+            }
         }
+        
         SDL_RenderClear(ren);
         SDL_RenderCopy(ren,texture,NULL,NULL);
         SDL_RenderCopy(ren,container->texture,NULL,&container->rect);
