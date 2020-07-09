@@ -69,7 +69,7 @@ SDL_Surface ** SGK_PR_GetSurface(void * node, int type)//private function to get
         case SGK_TYPE_CHECKBOK:
             return &((MZSDL_CheckBox *)node)->surface;
         case SGK_TYPE_INPUTBOX:
-            return &((MZSDL_InputBox *)node)->textSurf;
+            return &((MZSDL_InputBox *)node)->surface;
         case SGK_TYPE_RADIOBOX:
             return &((MZSDL_RadioButton *)node)->surface;
         case SGK_TYPE_CONTAINER:
@@ -257,7 +257,7 @@ int SGK_LinearLayoutBuild(MZSDL_Container * cont)
             {
                 return 0;
             }
-            SDL_FillRect(cont->surface,&clipRect,0xffffffff);
+            //SDL_FillRect(cont->surface,&clipRect,0xffffffff);
             if(SDL_BlitSurface(*cur->surface,NULL,cont->surface,&clipRect)!=0)
             {
                 return 0;
@@ -395,8 +395,7 @@ void SGK_DestroyContainer(MZSDL_Container * cont)
     elem= cont->elements;
     
     while(elem)
-    {
-       puts("ss"); 
+    { 
         switch(elem->type)
         {
             case SGK_TYPE_BUTTON:

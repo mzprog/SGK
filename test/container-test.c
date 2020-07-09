@@ -13,6 +13,7 @@ int main(int argc, char *argv[])
     SDL_Window * window= NULL;
     SDL_Renderer * ren=NULL;
     SDL_Event event;
+    int x,y;//for mouse postion
     
     //aditional 
     SDL_Texture *texture = NULL;

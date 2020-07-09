@@ -45,6 +45,7 @@ typedef struct {
  */
 typedef struct {
 	SDL_Texture * texture;
+    SDL_Surface * surface;//final surface
 	SDL_Surface * bg;
 	SDL_Surface * textSurf;
 	int fontsize;

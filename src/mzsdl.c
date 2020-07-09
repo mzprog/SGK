@@ -324,13 +324,14 @@ MZSDL_InputBox * MZSDL_CreateInputBox(SDL_Renderer * ren, char * title, int font
 	if(textT==NULL)
 	{
 		SDL_FreeSurface(bgS);
-		SDL_FreeSurface(bgS2);
+		//SDL_FreeSurface(bgS2);
 		SDL_FreeSurface(textS);
 		free(inbox);
 		return 0;
 
 	}
 	//copy texture and the font size
+	inbox->surface=bgS2;
 	inbox->texture=textT;
 	inbox->fontsize=fontSize;
 	return inbox;
@@ -414,7 +415,8 @@ int MZSDL_EnableInputBox(SDL_Renderer *ren, MZSDL_InputBox * box, Uint8 mode)
 			}
 			//coping last data and clear useless surface
 			box->textSurf=textS;
-			SDL_FreeSurface(bg2);
+			SDL_FreeSurface(box->surface);
+            box->surface=bg2;
 			box->active=0;
 			return 1;
 		}
@@ -615,6 +617,9 @@ int MZSDL_UpdateInputBox(SDL_Renderer * ren, MZSDL_InputBox * box, char *text)
 		SDL_FreeSurface(bg2);
 		return 0;
 	}
+	//new surface
+	SDL_FreeSurface(box->surface);
+    box->surface=bg2;
 	//destroy old texture and assign new one
 	SDL_DestroyTexture(box->texture);
 	box->texture=textT;
@@ -715,6 +720,7 @@ void MZSDL_FreeInputBox(MZSDL_InputBox * box)
 	SDL_DestroyTexture(box->texture);
 	SDL_FreeSurface(box->bg);
 	SDL_FreeSurface(box->textSurf);
+    SDL_FreeSurface(box->surface);
 	free(box);
 }
 
