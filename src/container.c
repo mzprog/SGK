@@ -519,7 +519,7 @@ puts("button");
             elem=elem->next;
         }
     }
-    
+    return 1;
 }
 
 
