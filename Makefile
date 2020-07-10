@@ -1,7 +1,7 @@
 CC	:= gcc
 LFLAGS	:= -lSDL2 -lSDL2_ttf -lm
 CFLAGS	:= -Wall -Werror -fPIC  $(LFLAGS)
-CTFLAGS	:= -Wall $(LFLAGS) -L/home/mz37/programming/MZSDL
+CTFLAGS	:= -Wall $(LFLAGS) -L/home/mz37/programming/SGK # my own path, this should be edited later
 LDFLAGS = -shared
 
 RM = rm -f   # rm command
