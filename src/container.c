@@ -1,12 +1,12 @@
 #include "container.h"
 
-#include "mzsdl.h"
+#include "widgets.h"
 
 #include <stdlib.h>
 
-MZSDL_Container * MZSDL_InitContainer(SDL_Renderer *ren, int layout, SDL_Rect * rect)
+SGK_Container * SGK_InitContainer(SDL_Renderer *ren, int layout, SDL_Rect * rect)
 {
-    MZSDL_Container * cont = (MZSDL_Container *) calloc(1,sizeof(MZSDL_Container));
+    SGK_Container * cont = (SGK_Container *) calloc(1,sizeof(SGK_Container));
     if(cont==NULL)
     {
         return NULL;
@@ -46,15 +46,15 @@ SDL_Rect * SGK_PR_GetRect(void * node, int type)//private function to get rect p
     switch(type)
     {
         case SGK_TYPE_BUTTON:
-            return &((MZSDL_Button *)node)->rect;
+            return &((SGK_Button *)node)->rect;
         case SGK_TYPE_CHECKBOK:
-            return &((MZSDL_CheckBox *)node)->rect;
+            return &((SGK_CheckBox *)node)->rect;
         case SGK_TYPE_INPUTBOX:
-            return &((MZSDL_InputBox *)node)->rect;
+            return &((SGK_InputBox *)node)->rect;
         case SGK_TYPE_RADIOBOX:
-            return &((MZSDL_RadioButton *)node)->rect;
+            return &((SGK_RadioButton *)node)->rect;
         case SGK_TYPE_CONTAINER:
-            return &((MZSDL_Container *)node)->rect;
+            return &((SGK_Container *)node)->rect;
         default:
             return NULL;
     }
@@ -65,24 +65,24 @@ SDL_Surface ** SGK_PR_GetSurface(void * node, int type)//private function to get
     switch(type)
     {
         case SGK_TYPE_BUTTON:
-            return &((MZSDL_Button *)node)->surface;
+            return &((SGK_Button *)node)->surface;
         case SGK_TYPE_CHECKBOK:
-            return &((MZSDL_CheckBox *)node)->surface;
+            return &((SGK_CheckBox *)node)->surface;
         case SGK_TYPE_INPUTBOX:
-            return &((MZSDL_InputBox *)node)->surface;
+            return &((SGK_InputBox *)node)->surface;
         case SGK_TYPE_RADIOBOX:
-            return &((MZSDL_RadioButton *)node)->surface;
+            return &((SGK_RadioButton *)node)->surface;
         case SGK_TYPE_CONTAINER:
-            return &((MZSDL_Container *)node)->surface;
+            return &((SGK_Container *)node)->surface;
         default:
             return NULL;
     }
 }
 
-MZSDL_ContElements *  MZSDL_ContainerAddElement(MZSDL_Container *cont,void * node, int type)
+SGK_ContElements *  SGK_ContainerAddElement(SGK_Container *cont,void * node, int type)
 {
-    MZSDL_ContElements *cur=NULL;
-    MZSDL_ContElements * elem = (MZSDL_ContElements *)calloc(1, sizeof(MZSDL_ContElements));
+    SGK_ContElements *cur=NULL;
+    SGK_ContElements * elem = (SGK_ContElements *)calloc(1, sizeof(SGK_ContElements));
     if(elem ==NULL)
     {
         return NULL;
@@ -123,7 +123,7 @@ MZSDL_ContElements *  MZSDL_ContainerAddElement(MZSDL_Container *cont,void * nod
     return elem;
 }
 
-int MZSDL_ContainerBuild(MZSDL_Container * cont)
+int SGK_ContainerBuild(SGK_Container * cont)
 {
     if(cont->layout==SGK_LINEARLAYOUT)
     {
@@ -136,7 +136,7 @@ int MZSDL_ContainerBuild(MZSDL_Container * cont)
 }
 
 
-int SGK_LinearLayoutBuild(MZSDL_Container * cont)
+int SGK_LinearLayoutBuild(SGK_Container * cont)
 {
     int length;
     int DispLength;
@@ -146,7 +146,7 @@ int SGK_LinearLayoutBuild(MZSDL_Container * cont)
     SDL_Rect clipRect;
     
     char vertical;//boolean to check if vertical = 1 ,if horizontal = 0
-    MZSDL_ContElements *cur;
+    SGK_ContElements *cur;
     
     if(cont->layout != SGK_LINEARLAYOUT)
         return 0;
@@ -381,10 +381,10 @@ int SGK_LinearLayoutBuild(MZSDL_Container * cont)
     return 1;
 }
 
-void SGK_DestroyContainer(MZSDL_Container * cont)
+void SGK_DestroyContainer(SGK_Container * cont)
 {
-    MZSDL_ContElements * elem;
-    MZSDL_ContElements * tmp;
+    SGK_ContElements * elem;
+    SGK_ContElements * tmp;
     
     if(cont==NULL)
     {
@@ -408,13 +408,13 @@ void SGK_DestroyContainer(MZSDL_Container * cont)
         switch(elem->type)
         {
             case SGK_TYPE_BUTTON:
-                MZSDL_FreeButton(elem->element);break;
+                SGK_FreeButton(elem->element);break;
             case SGK_TYPE_CHECKBOK:
-                MZSDL_FreeCheckBox(elem->element);break;
+                SGK_FreeCheckBox(elem->element);break;
             case SGK_TYPE_INPUTBOX:
-                MZSDL_FreeInputBox(elem->element);break;
+                SGK_FreeInputBox(elem->element);break;
             case SGK_TYPE_RADIOBOX:
-                MZSDL_FreeRadioButton(elem->element);break;
+                SGK_FreeRadioButton(elem->element);break;
             case SGK_TYPE_CONTAINER:
                 SGK_DestroyContainer(elem->element);break;
         }
@@ -427,7 +427,7 @@ void SGK_DestroyContainer(MZSDL_Container * cont)
     
 }
 
-int SGK__PR_ElementClicked(MZSDL_ContElements * e, int x, int y)
+int SGK__PR_ElementClicked(SGK_ContElements * e, int x, int y)
 {
 	 if(x>=e->rect->x && y>=e->rect->y && \
 			 x<=e->rect->x+e->rect->w && y<=e->rect->y + e->rect->h)
@@ -441,7 +441,7 @@ int SGK__PR_ElementClicked(MZSDL_ContElements * e, int x, int y)
 
 }
 
-int SGK_PR_UpdateContainerDisplay(MZSDL_Container * cont)
+int SGK_PR_UpdateContainerDisplay(SGK_Container * cont)
 {
 
     SDL_BlitSurface(cont->surface,NULL,cont->DispSurface,&cont->DispRect);
@@ -456,9 +456,9 @@ int SGK_PR_UpdateContainerDisplay(MZSDL_Container * cont)
     return 1;
 }
 
-int SGK_Events_MouseDown(MZSDL_Container * cont,int x,int y)
+int SGK_Events_MouseDown(SGK_Container * cont,int x,int y)
 {
-    MZSDL_ContElements * elem;
+    SGK_ContElements * elem;
     char update = 0;//boolean varaible to check if we should update the container texture
     if(cont->rect.x > x || cont->rect.x + cont->rect.w < x)
     {
@@ -493,7 +493,7 @@ puts("button");
                     
                     break;
                 case SGK_TYPE_INPUTBOX:
-                    MZSDL_EnableInputBox(cont->render,elem->element,1);
+                    SGK_EnableInputBox(cont->render,elem->element,1);
                     //NOTICE add the input box to global varible to disable it when clicked on different part
                     update = 1;
                     break;

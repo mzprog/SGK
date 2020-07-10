@@ -1,4 +1,4 @@
-#include "mzsdl.h"
+#include "widgets.h"
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
 
@@ -9,19 +9,19 @@
 
 #define textCur '|'
 
-MZSDL_Button * MZSDL_AddButton(SDL_Renderer *ren,char * title, int fontSize, int x, int y)
+SGK_Button * SGK_AddButton(SDL_Renderer *ren,char * title, int fontSize, int x, int y)
 {
 	int i,j;//pixels indexing
 	int w, h;//dimention of the button
 	int temp;//the temp value for calculation of the corners
 	TTF_Font * font;
 	SDL_Surface * textS;//the surface for the text
-	MZSDL_Button * box;//the returned struct
+	SGK_Button * box;//the returned struct
 	SDL_Color black={0,0,0};//black color
 	SDL_Surface * surface;//the background surface
 
 	//initialaze the struct of the button
-	box = (MZSDL_Button *) malloc(sizeof(MZSDL_Button));
+	box = (SGK_Button *) malloc(sizeof(SGK_Button));
 	if (box == NULL)
 	{
 		return 0;
@@ -64,13 +64,13 @@ MZSDL_Button * MZSDL_AddButton(SDL_Renderer *ren,char * title, int fontSize, int
 	//draw black edges
 	for(i=0;i<w+20;i++)
 	{
-		MZSDL_PutPixel32(surface,i,0,amask);
-		MZSDL_PutPixel32(surface,i,h+9,amask);
+		SGK_PutPixel32(surface,i,0,amask);
+		SGK_PutPixel32(surface,i,h+9,amask);
 	}
 	for(j=0;j<h+10;j++)
 	{
-		MZSDL_PutPixel32(surface, 0, j, amask);
-		MZSDL_PutPixel32(surface, w+19, j, amask);
+		SGK_PutPixel32(surface, 0, j, amask);
+		SGK_PutPixel32(surface, w+19, j, amask);
 	}
 
 	//make round corners
@@ -82,11 +82,11 @@ MZSDL_Button * MZSDL_AddButton(SDL_Renderer *ren,char * title, int fontSize, int
 			temp=sqrt(pow(CornerSize-i,2) + pow(CornerSize-j,2));
 			if(temp>CornerSize)
 			{
-				MZSDL_PutPixel32(surface, i, j, 0);
+				SGK_PutPixel32(surface, i, j, 0);
 			}
 			else if(temp == CornerSize)
 			{
-				MZSDL_PutPixel32(surface, i, j, amask);
+				SGK_PutPixel32(surface, i, j, amask);
 			}
 		}
 	}
@@ -98,11 +98,11 @@ MZSDL_Button * MZSDL_AddButton(SDL_Renderer *ren,char * title, int fontSize, int
 			temp=sqrt(pow(CornerSize-(w+19-i),2)+pow(CornerSize-j,2));
 			if(temp>CornerSize)
 			{
-				MZSDL_PutPixel32(surface, i, j, 0);
+				SGK_PutPixel32(surface, i, j, 0);
 			}
 			else if(temp == CornerSize)
 			{
-				MZSDL_PutPixel32(surface, i, j, amask);
+				SGK_PutPixel32(surface, i, j, amask);
 			}
 
 		}
@@ -115,11 +115,11 @@ MZSDL_Button * MZSDL_AddButton(SDL_Renderer *ren,char * title, int fontSize, int
 			temp=sqrt(pow(CornerSize-i,2)+pow(CornerSize-(h+9-j),2));
 			if(temp>CornerSize)
 			{
-				MZSDL_PutPixel32(surface, i, j, 0);
+				SGK_PutPixel32(surface, i, j, 0);
 			}
 			else if(temp == CornerSize)
 			{
-				MZSDL_PutPixel32(surface, i, j, amask);
+				SGK_PutPixel32(surface, i, j, amask);
 			}
 		}
 	}
@@ -131,11 +131,11 @@ MZSDL_Button * MZSDL_AddButton(SDL_Renderer *ren,char * title, int fontSize, int
 			temp=sqrt(pow(CornerSize-(w+19-i),2)+pow(CornerSize-(h+9-j),2));
 			if(temp > CornerSize)
 			{
-				MZSDL_PutPixel32(surface, i, j, 0);
+				SGK_PutPixel32(surface, i, j, 0);
 			}
 			else if(temp == CornerSize)
 			{
-				MZSDL_PutPixel32(surface, i, j, amask);
+				SGK_PutPixel32(surface, i, j, amask);
 			}
 		}
 	}
@@ -160,7 +160,7 @@ MZSDL_Button * MZSDL_AddButton(SDL_Renderer *ren,char * title, int fontSize, int
 	return box;
 
 }
-void MZSDL_EnableButton(SDL_Renderer * ren,MZSDL_Button *button, int flag)
+void SGK_EnableButton(SDL_Renderer * ren,SGK_Button *button, int flag)
 {
 	int i;
  	Uint32 *pixels = (Uint32 *)button->surface->pixels;//convert void to Uint32 to use pixels variable
@@ -199,7 +199,7 @@ void MZSDL_EnableButton(SDL_Renderer * ren,MZSDL_Button *button, int flag)
 	button->texture=SDL_CreateTextureFromSurface(ren,button->surface);
 }
 
-int MZSDL_ButtonClicked(MZSDL_Button * button, int x, int y)
+int SGK_ButtonClicked(SGK_Button * button, int x, int y)
 {
      if(x>=button->rect.x && y>=button->rect.y && \
 			 x<=button->rect.x+button->rect.w && y<=button->rect.y + button->rect.h)
@@ -212,16 +212,16 @@ int MZSDL_ButtonClicked(MZSDL_Button * button, int x, int y)
 	 }
 }
 
-void MZSDL_FreeButton(MZSDL_Button * button)
+void SGK_FreeButton(SGK_Button * button)
 {
 	SDL_DestroyTexture(button->texture);
 	SDL_FreeSurface(button->surface);
 	free(button);
 }
 
-MZSDL_InputBox * MZSDL_CreateInputBox(SDL_Renderer * ren, char * title, int fontSize, int length, int x, int y)
+SGK_InputBox * SGK_CreateInputBox(SDL_Renderer * ren, char * title, int fontSize, int length, int x, int y)
 {
-	MZSDL_InputBox * inbox;//the returned varaible
+	SGK_InputBox * inbox;//the returned varaible
 	TTF_Font * font;//the font
 	SDL_Surface * textS;//the text surface
 	SDL_Texture * textT;//multi use for texture
@@ -232,7 +232,7 @@ MZSDL_InputBox * MZSDL_CreateInputBox(SDL_Renderer * ren, char * title, int font
 	int i;
 
 	//initailize the structure of the input box
-	inbox= (MZSDL_InputBox *) malloc(sizeof(MZSDL_InputBox));
+	inbox= (SGK_InputBox *) malloc(sizeof(SGK_InputBox));
 	if(inbox == NULL)
 	{
 		return 0;
@@ -292,14 +292,14 @@ MZSDL_InputBox * MZSDL_CreateInputBox(SDL_Renderer * ren, char * title, int font
 	//horizontal borders
 	for(i=0;i<length;i++)
 	{
-		MZSDL_PutPixel32(bgS, i, 0, bColor);//top
-		MZSDL_PutPixel32(bgS, i, r.h +9, bColor);//bottom
+		SGK_PutPixel32(bgS, i, 0, bColor);//top
+		SGK_PutPixel32(bgS, i, r.h +9, bColor);//bottom
 	}
 	//vertical borders
 	for(i=0;i<r.h + 10;i++)
 	{
-		MZSDL_PutPixel32(bgS, 0, i, bColor);//left
-		MZSDL_PutPixel32(bgS, length-1, i, bColor);//right
+		SGK_PutPixel32(bgS, 0, i, bColor);//left
+		SGK_PutPixel32(bgS, length-1, i, bColor);//right
 	}
 	// copy the surface
 	SDL_BlitSurface(bgS, NULL, bgS2, NULL);
@@ -337,7 +337,7 @@ MZSDL_InputBox * MZSDL_CreateInputBox(SDL_Renderer * ren, char * title, int font
 	return inbox;
 }
 
-int MZSDL_EnableInputBox(SDL_Renderer *ren, MZSDL_InputBox * box, Uint8 mode)
+int SGK_EnableInputBox(SDL_Renderer *ren, SGK_InputBox * box, Uint8 mode)
 {
 	int i;
 	TTF_Font * font;
@@ -361,14 +361,14 @@ int MZSDL_EnableInputBox(SDL_Renderer *ren, MZSDL_InputBox * box, Uint8 mode)
 		//vertical
 		for(i=0;i<box->rect.w;i++)
 		{
-			MZSDL_PutPixel32(box->bg, i, 0, bColor);//top
-			MZSDL_PutPixel32(box->bg, i, box->rect.h-1,bColor);//botton
+			SGK_PutPixel32(box->bg, i, 0, bColor);//top
+			SGK_PutPixel32(box->bg, i, box->rect.h-1,bColor);//botton
 		}
 		//horizontal
 		for(i=0;i<box->rect.h;i++)
 		{
-			MZSDL_PutPixel32(box->bg, 0, i,bColor);//left
-			MZSDL_PutPixel32(box->bg, box->rect.w-1, i, bColor);//right
+			SGK_PutPixel32(box->bg, 0, i,bColor);//left
+			SGK_PutPixel32(box->bg, box->rect.w-1, i, bColor);//right
 		}
 		//edit text and remove the cursor from the text
 		strcpy(buf,box->text+box->curPos+1);
@@ -485,14 +485,14 @@ int MZSDL_EnableInputBox(SDL_Renderer *ren, MZSDL_InputBox * box, Uint8 mode)
 		//vertical
 		for(i=0;i<box->rect.w;i++)
 		{
-			MZSDL_PutPixel32(box->bg, i, 0, amask);//top
-			MZSDL_PutPixel32(box->bg, i, box->rect.h-1,amask);//bottom
+			SGK_PutPixel32(box->bg, i, 0, amask);//top
+			SGK_PutPixel32(box->bg, i, box->rect.h-1,amask);//bottom
 		}
 		//horizontal
 		for(i=0;i<box->rect.h;i++)
 		{
-			MZSDL_PutPixel32(box->bg, 0, i,amask);//left
-			MZSDL_PutPixel32(box->bg, box->rect.w-1, i, amask);//right
+			SGK_PutPixel32(box->bg, 0, i,amask);//left
+			SGK_PutPixel32(box->bg, box->rect.w-1, i, amask);//right
 		}
 		//add the cursor at the end and get the cursor location
 		box->text[strlen(box->text)]=textCur;
@@ -551,7 +551,7 @@ int MZSDL_EnableInputBox(SDL_Renderer *ren, MZSDL_InputBox * box, Uint8 mode)
 		}
 	}
 }
-int MZSDL_UpdateInputBox(SDL_Renderer * ren, MZSDL_InputBox * box, char *text)
+int SGK_UpdateInputBox(SDL_Renderer * ren, SGK_InputBox * box, char *text)
 {
 	SDL_Surface * bg2;//another background surface
 	SDL_Texture * textT;
@@ -632,7 +632,7 @@ int MZSDL_UpdateInputBox(SDL_Renderer * ren, MZSDL_InputBox * box, char *text)
 	return 1;
 }
 
-int MZSDL_InputBoxClicked(MZSDL_InputBox * box, int x, int y)
+int SGK_InputBoxClicked(SGK_InputBox * box, int x, int y)
 {
 	 if(x>=box->rect.x && y>=box->rect.y && \
 			 x<=box->rect.x+box->rect.w && y<=box->rect.y + box->rect.h)
@@ -646,7 +646,7 @@ int MZSDL_InputBoxClicked(MZSDL_InputBox * box, int x, int y)
 
 }
 
-void MZSDL_EditInputBox(SDL_Renderer * ren, MZSDL_InputBox * box, int flag)
+void SGK_EditInputBox(SDL_Renderer * ren, SGK_InputBox * box, int flag)
 {
 	char buf[256];
 	TTF_Font * font;
@@ -716,12 +716,12 @@ void MZSDL_EditInputBox(SDL_Renderer * ren, MZSDL_InputBox * box, int flag)
 	SDL_DestroyTexture(box->texture);
 	box->texture=textT;
 }
-char * MZSDL_GetTextFromInputBox(MZSDL_InputBox * box)
+char * SGK_GetTextFromInputBox(SGK_InputBox * box)
 {
 	return box->text;
 }
 
-void MZSDL_FreeInputBox(MZSDL_InputBox * box)
+void SGK_FreeInputBox(SGK_InputBox * box)
 {
 	SDL_DestroyTexture(box->texture);
 	SDL_FreeSurface(box->bg);
@@ -730,14 +730,14 @@ void MZSDL_FreeInputBox(MZSDL_InputBox * box)
 	free(box);
 }
 
-MZSDL_RadioButton * MZSDL_CreateRadioButton(SDL_Renderer * ren, char **option, int size, int Default, int fontsize, int x, int y)
+SGK_RadioButton * SGK_CreateRadioButton(SDL_Renderer * ren, char **option, int size, int Default, int fontsize, int x, int y)
 {
 	int i,j,k;
 	int length;
 	SDL_Surface ** textS;
 	SDL_Surface ** FtextS;
 	SDL_Surface * surf;
-	MZSDL_RadioButton * rad;
+	SGK_RadioButton * rad;
 	SDL_Rect r;
 	SDL_Color black={0,0,0};
 	Uint32 grey=0x77777777 | amask;
@@ -751,7 +751,7 @@ MZSDL_RadioButton * MZSDL_CreateRadioButton(SDL_Renderer * ren, char **option, i
 		return 0;
 	}
 	//create the struct
-	rad =(MZSDL_RadioButton *) malloc(sizeof(MZSDL_RadioButton)) ;
+	rad =(SGK_RadioButton *) malloc(sizeof(SGK_RadioButton)) ;
 	if(rad ==NULL)
 	{
 		return 0;
@@ -875,18 +875,18 @@ MZSDL_RadioButton * MZSDL_CreateRadioButton(SDL_Renderer * ren, char **option, i
 				length=(double) sqrt(pow((double)(k-r.h/2),2)+pow((double)(j-r.h/2),2));
 				if(length==r.h/2 -3|| length == r.h/2 -2)
 				{
-					MZSDL_PutPixel32(FtextS[i],j,k,grey);
+					SGK_PutPixel32(FtextS[i],j,k,grey);
 				}
 				else if(length < r.h/2-2)
 				{
 					if(i==Default)
-						MZSDL_PutPixel32(FtextS[i],j,k,green);
+						SGK_PutPixel32(FtextS[i],j,k,green);
 					else
-						MZSDL_PutPixel32(FtextS[i],j,k,LightGrey);
+						SGK_PutPixel32(FtextS[i],j,k,LightGrey);
 				}
 				else if(length == r.h/2 -1)
 				{
-					MZSDL_PutPixel32(FtextS[i],j,k,grey ^ (amask & 0x33333333));
+					SGK_PutPixel32(FtextS[i],j,k,grey ^ (amask & 0x33333333));
 				}
 
 			}
@@ -956,7 +956,7 @@ MZSDL_RadioButton * MZSDL_CreateRadioButton(SDL_Renderer * ren, char **option, i
 	return rad;
 }
 
-Sint8 MZSDL_RadioButtonClicked(MZSDL_RadioButton * rad, int x,int y)
+Sint8 SGK_RadioButtonClicked(SGK_RadioButton * rad, int x,int y)
 {
 	if(x >rad->rect.x && y > rad->rect.y && x < rad->rect.x + rad->rect.w && y <rad->rect.y + rad->rect.h)
 	{
@@ -968,7 +968,7 @@ Sint8 MZSDL_RadioButtonClicked(MZSDL_RadioButton * rad, int x,int y)
 	}
 }
 
-void MZSDL_UpdateRadioButton(SDL_Renderer * ren, MZSDL_RadioButton * rad, Sint8 opt)
+void SGK_UpdateRadioButton(SDL_Renderer * ren, SGK_RadioButton * rad, Sint8 opt)
 {
 	int center,center2,a;
 	int i,j;
@@ -991,8 +991,8 @@ void MZSDL_UpdateRadioButton(SDL_Renderer * ren, MZSDL_RadioButton * rad, Sint8 
 			length= (double)sqrt(pow((double)(i-rad->lineHeight/2),2)+pow((double)(j-center),2));
 			if(length< rad->lineHeight/2 -3)
 			{
-				MZSDL_PutPixel32(rad->surface, i,j  , LightGrey);//remove
-				MZSDL_PutPixel32(rad->surface, i,j+a, green);//add
+				SGK_PutPixel32(rad->surface, i,j  , LightGrey);//remove
+				SGK_PutPixel32(rad->surface, i,j+a, green);//add
 			}
 		}
 	}
@@ -1001,7 +1001,7 @@ void MZSDL_UpdateRadioButton(SDL_Renderer * ren, MZSDL_RadioButton * rad, Sint8 
 	rad->texture=SDL_CreateTextureFromSurface(ren,rad->surface);
 }
 
-void MZSDL_FreeRadioButton(MZSDL_RadioButton * rad)
+void SGK_FreeRadioButton(SGK_RadioButton * rad)
 {
 	int i;
 	SDL_DestroyTexture(rad->texture);
@@ -1014,9 +1014,9 @@ void MZSDL_FreeRadioButton(MZSDL_RadioButton * rad)
 	free(rad);
 }
 
-MZSDL_CheckBox * MZSDL_CreateCheckBox(SDL_Renderer * ren, char **option, int size, int fontsize, int x, int y)
+SGK_CheckBox * SGK_CreateCheckBox(SDL_Renderer * ren, char **option, int size, int fontsize, int x, int y)
 {
-	MZSDL_CheckBox * box;
+	SGK_CheckBox * box;
 	SDL_Surface ** textS;
 	SDL_Surface ** textF;
 	SDL_Rect r;
@@ -1027,7 +1027,7 @@ MZSDL_CheckBox * MZSDL_CreateCheckBox(SDL_Renderer * ren, char **option, int siz
 	int tx,tj;
 
     //alocating data
-	box=(MZSDL_CheckBox *) malloc(sizeof(MZSDL_CheckBox));
+	box=(SGK_CheckBox *) malloc(sizeof(SGK_CheckBox));
 	if(box==NULL)
 	{
 		return 0;
@@ -1105,11 +1105,11 @@ MZSDL_CheckBox * MZSDL_CreateCheckBox(SDL_Renderer * ren, char **option, int siz
 			{
 				if(j==1 || k==1 || j==r.h-1 || k==r.h-1 )
 				{
-					MZSDL_PutPixel32(textF[i],j,k,amask);
+					SGK_PutPixel32(textF[i],j,k,amask);
 				}
 				else
 				{
-					MZSDL_PutPixel32(textF[i],j,k,0xffffffff);
+					SGK_PutPixel32(textF[i],j,k,0xffffffff);
 				}
 			}
 		}
@@ -1122,13 +1122,13 @@ MZSDL_CheckBox * MZSDL_CreateCheckBox(SDL_Renderer * ren, char **option, int siz
 					tj=r.h+j-3*r.h/8-k -1;
 					if(tj>1 && tj<r.h-1)
 					{
-						MZSDL_PutPixel32(textF[i],j,tj,grey);
+						SGK_PutPixel32(textF[i],j,tj,grey);
 					}
 				}
 				tj=r.h-k-5*j/8;
 				if(tj>1 && tj<r.h-1)
 				{
-					MZSDL_PutPixel32(textF[i],tj,j,grey);
+					SGK_PutPixel32(textF[i],tj,j,grey);
 				}
 			}
 		}
@@ -1232,7 +1232,7 @@ MZSDL_CheckBox * MZSDL_CreateCheckBox(SDL_Renderer * ren, char **option, int siz
 	return box;
 }
 
-void MZSDL_FreeCheckBox(MZSDL_CheckBox * box)
+void SGK_FreeCheckBox(SGK_CheckBox * box)
 {
 	int i;
 	SDL_FreeSurface(box->surface);
@@ -1246,7 +1246,7 @@ void MZSDL_FreeCheckBox(MZSDL_CheckBox * box)
 	free(box);
 }
 
-Sint8 MZSDL_CheckBoxClicked(MZSDL_CheckBox * box, int x,int y)
+Sint8 SGK_CheckBoxClicked(SGK_CheckBox * box, int x,int y)
 {
 	if(x >box->rect.x && y > box->rect.y && x < box->rect.x + box->rect.w && y <box->rect.y + box->rect.h)
 	{
@@ -1258,7 +1258,7 @@ Sint8 MZSDL_CheckBoxClicked(MZSDL_CheckBox * box, int x,int y)
 	}
 }
 
-void MZSDL_UpdateCheckBox(SDL_Renderer *ren, MZSDL_CheckBox * box, Sint8 opt)
+void SGK_UpdateCheckBox(SDL_Renderer *ren, SGK_CheckBox * box, Sint8 opt)
 {
 	int j,tj,k;
 	SDL_Texture * tex;
@@ -1287,13 +1287,13 @@ void MZSDL_UpdateCheckBox(SDL_Renderer *ren, MZSDL_CheckBox * box, Sint8 opt)
 				tj=box->lineHeight+j-3*box->lineHeight/8-k -1;
 				if(tj>1 && tj<box->lineHeight-1)
 				{
-					MZSDL_PutPixel32(box->surface,j,tj+opt*box->lineHeight,color);
+					SGK_PutPixel32(box->surface,j,tj+opt*box->lineHeight,color);
 				}
 			}
 			tj=box->lineHeight-k-5*j/8;
 			if(tj>1 && tj<box->lineHeight-1)
 			{
-				MZSDL_PutPixel32(box->surface,tj,j+opt*box->lineHeight,color);
+				SGK_PutPixel32(box->surface,tj,j+opt*box->lineHeight,color);
 			}
 		}
 	}
@@ -1306,7 +1306,7 @@ void MZSDL_UpdateCheckBox(SDL_Renderer *ren, MZSDL_CheckBox * box, Sint8 opt)
 }
 
 
-void MZSDL_PutPixel32( SDL_Surface *surface, int x, int y, Uint32 pixel )
+void SGK_PutPixel32( SDL_Surface *surface, int x, int y, Uint32 pixel )
 {
 	//Convert the pixels to 32 bit
 	Uint32 *pixels = (Uint32 *)surface->pixels;

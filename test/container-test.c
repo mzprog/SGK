@@ -1,4 +1,4 @@
-#include "../src/sgk.h"
+#include "../src/SGK.h"
 
 #include <stdio.h>
 #include <SDL2/SDL.h>
@@ -64,12 +64,12 @@ int main(int argc, char *argv[])
         return -1;
     }
     
-    MZSDL_Button *btn = MZSDL_AddButton(ren,"my Button",18,100,200);
-    MZSDL_InputBox * inp = MZSDL_CreateInputBox(ren,"input box",18,200,100,100);
+    SGK_Button *btn = SGK_AddButton(ren,"my Button",18,100,200);
+    SGK_InputBox * inp = SGK_CreateInputBox(ren,"input box",18,200,100,100);
     
-    MZSDL_Container * container=MZSDL_InitContainer(ren,SGK_LINEARLAYOUT,NULL);
+    SGK_Container * container=SGK_InitContainer(ren,SGK_LINEARLAYOUT,NULL);
     
-    MZSDL_ContElements * btnElem = MZSDL_ContainerAddElement(container,btn,SGK_TYPE_BUTTON);
+    SGK_ContElements * btnElem = SGK_ContainerAddElement(container,btn,SGK_TYPE_BUTTON);
     if(btnElem==NULL)
     {
         puts("cant add node btn");
@@ -77,13 +77,13 @@ int main(int argc, char *argv[])
     }
     btnElem->align=SGK_ALIGNLEFT;
     
-    if(MZSDL_ContainerAddElement(container,inp,SGK_TYPE_INPUTBOX)==NULL)
+    if(SGK_ContainerAddElement(container,inp,SGK_TYPE_INPUTBOX)==NULL)
     {
         puts("cant add node inp");
         return -1;
     }
     
-    if(MZSDL_ContainerBuild(container)==0)
+    if(SGK_ContainerBuild(container)==0)
     {
         puts("cant abuild cont");
         return -1;

@@ -9,7 +9,7 @@ TARGET_LIB = libSGK.so  # target lib
 
 TARGET_TEST = test/test-container.out
 
-SRCS = src/mzsdl.c src/container.c
+SRCS = src/widgets.c src/container.c
 OBJS = $(SRCS:.c=.o)
 
 
@@ -17,7 +17,7 @@ OBJS = $(SRCS:.c=.o)
 all: ${TARGET_LIB}
 
 test/test-container.out: ${TARGET_LIB} test/container-test.c
-	$(CC)  -o $@ test/container-test.c -lSGK  $(LFLAGS)
+	$(CC)  -o $@ test/container-test.c -lSGK  $(CTFLAGS)
 
 $(TARGET_LIB): $(OBJS)
 	$(CC) ${LDFLAGS} -o $@ $^

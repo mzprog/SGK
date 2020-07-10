@@ -2,7 +2,7 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
 
-#include "../src/mzsdl.h"
+#include "../src/SGK.h"
 
 
 #define SCREEN_WIDTH 1280
@@ -107,16 +107,16 @@ int main(int argc, char ** argv)
      */
     
   
-    MZSDL_Button *btn = MZSDL_AddButton(ren,"my Button",18,100,200);
+    SGK_Button *btn = SGK_AddButton(ren,"my Button",18,100,200);
     if(btn == NULL)
     {
         puts("btm init error");
         return -1;
     }
 
-    MZSDL_InputBox * inp = MZSDL_CreateInputBox(ren,"input box",18,200,100,100);
-    MZSDL_RadioButton * rdb = MZSDL_CreateRadioButton(ren,radioOpt,4,2,18,100,300);
-    MZSDL_CheckBox * chb = MZSDL_CreateCheckBox(ren, checkOpt,3,18,100,400);
+    SGK_InputBox * inp = SGK_CreateInputBox(ren,"input box",18,200,100,100);
+    SGK_RadioButton * rdb = SGK_CreateRadioButton(ren,radioOpt,4,2,18,100,300);
+    SGK_CheckBox * chb = SGK_CreateCheckBox(ren, checkOpt,3,18,100,400);
     
 
  
@@ -150,31 +150,31 @@ int main(int argc, char ** argv)
             {
                 SDL_GetMouseState(&x,&y);
 
-                if(MZSDL_InputBoxClicked(inp,x,y))
+                if(SGK_InputBoxClicked(inp,x,y))
                 {
-                    MZSDL_EnableInputBox(ren,inp,1);
+                    SGK_EnableInputBox(ren,inp,1);
                 }
                 else
                 {
-                    MZSDL_EnableInputBox(ren,inp,0);
+                    SGK_EnableInputBox(ren,inp,0);
                 }
                 
                 //if selected it will be updated else no effect
-                MZSDL_UpdateRadioButton(ren,rdb,MZSDL_RadioButtonClicked(rdb,x,y));
-                MZSDL_UpdateCheckBox(ren,chb,MZSDL_CheckBoxClicked(chb,x,y));
+                SGK_UpdateRadioButton(ren,rdb,SGK_RadioButtonClicked(rdb,x,y));
+                SGK_UpdateCheckBox(ren,chb,SGK_CheckBoxClicked(chb,x,y));
             }
             else if(event.type == SDL_TEXTINPUT)
             {
                 if(inp->active)
                 {
-                    MZSDL_UpdateInputBox(ren,inp, event.text.text);
+                    SGK_UpdateInputBox(ren,inp, event.text.text);
                 }
             }
             else if(event.type ==SDL_KEYDOWN)
             {
                 if(event.key.keysym.sym == SDLK_BACKSPACE)
                 {
-                    MZSDL_EditInputBox(ren,inp,event.key.keysym.sym);
+                    SGK_EditInputBox(ren,inp,event.key.keysym.sym);
                 }
             }
         }

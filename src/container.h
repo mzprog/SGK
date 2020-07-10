@@ -49,7 +49,7 @@ typedef struct contelem
     
     
     struct contelem * next;
-} MZSDL_ContElements;
+} SGK_ContElements;
 
 typedef struct {
     int direction;
@@ -84,23 +84,23 @@ typedef struct{
     char flags;//additional flags data
     
     int elementCount;
-    MZSDL_ContElements * elements;
+    SGK_ContElements * elements;
     Spacer  spacer;
     
     
     
-} MZSDL_Container;
+} SGK_Container;
 
 
-MZSDL_Container* MZSDL_InitContainer(SDL_Renderer* ren, int layout, SDL_Rect* rect);
+SGK_Container* SGK_InitContainer(SDL_Renderer* ren, int layout, SDL_Rect* rect);
 
-MZSDL_ContElements * MZSDL_ContainerAddElement(MZSDL_Container *cont,void * node, int type);
-int MZSDL_ContainerBuild(MZSDL_Container * cont);
-int SGK_LinearLayoutBuild(MZSDL_Container * cont);
+SGK_ContElements * SGK_ContainerAddElement(SGK_Container *cont,void * node, int type);
+int SGK_ContainerBuild(SGK_Container * cont);
+int SGK_LinearLayoutBuild(SGK_Container * cont);
 
-void SGK_DestroyContainer(MZSDL_Container * cont);
+void SGK_DestroyContainer(SGK_Container * cont);
 
-int SGK_Events_MouseDown(MZSDL_Container * cont,int x,int y);
+int SGK_Events_MouseDown(SGK_Container * cont,int x,int y);
 
 
 #endif 

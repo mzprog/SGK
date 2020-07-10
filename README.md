@@ -1,4 +1,4 @@
-# MZSDL
+# SGK
 a new tools for GUI under SDL2
 
 ## how to use
