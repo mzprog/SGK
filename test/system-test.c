@@ -1,4 +1,4 @@
-#include "../src/SGK.h"
+#include <SGK/SGK.h>
 
 int main(int argc, char ** argv)
 {

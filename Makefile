@@ -1,7 +1,7 @@
 CC	:= gcc
 LFLAGS	:= -lSDL2 -lSDL2_ttf -lm
 CFLAGS	:= -Wall -Werror -fPIC  $(LFLAGS)
-CTFLAGS	:= -Wall $(LFLAGS) -L/home/mz37/programming/SGK # my own path, this should be edited later
+CTFLAGS	:= -Wall $(LFLAGS) 
 LDFLAGS = -shared
 
 RM = rm -f   # rm command
@@ -10,8 +10,12 @@ TARGET_LIB = libSGK.so  # target lib
 TARGET_TEST = test/test-container.out test/system-test.out
 
 SRCS = src/SGK.c src/widgets.c src/container.c
+HDRS = $(SRCS:.c=.h) #we will edit it later
+
 OBJS = $(SRCS:.c=.o)
 
+DISTLIB = /usr/lib
+DISTHDR = /usr/include/SGK
 
 
 all: ${TARGET_LIB}
@@ -29,6 +33,13 @@ $(SRCS:.c=.d):%.d:%.c
 	$(CC) $(CFLAGS) -MM $< >$@
 
 include $(SRCS:.c=.d)
+
+install: ${TARGET_LIB} 
+	cp $< $(DISTLIB)
+	chmod 0755  $(DISTLIB)/$(TARGET_LIB)
+	ldconfig
+	mkdir $(DISTHDR)
+	cp $(HDRS) $(DISTHDR)
 
 clean:
 	-${RM} ${TARGET_LIB} ${OBJS} $(SRCS:.c=.d) ${TARGET_TEST}

@@ -1,12 +1,9 @@
-#include "../src/SGK.h"
-
-#include <stdio.h>
-#include <SDL2/SDL.h>
+#include <SGK/SGK.h>
 #include <SDL2/SDL_ttf.h>
+
 
 #define SCREEN_WIDTH 1280
 #define SCREEN_HIEGHT 720
-
 
 int main(int argc, char *argv[])
 {
