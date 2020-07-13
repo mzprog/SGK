@@ -12,7 +12,22 @@ library is still under development and testing, so you can read the header files
 also you can read test files from `test` directory, it will help a lot.
 <br>
 <br>
-a good wiki and complete guide will be added later when will have a better and bigger code
+
+## Install and test
+
+to compile the library, just simply type :
+
+    make
+    make intall
+    
+to test the library type for example:
+
+    make test/system-test.out # or another target 
+    cd test # because ttf file is inside the test directory, we will fix it later
+    ./system-test.out
+    
+read `Makefile` to get the target available 
+    
 
 # TODO list
 1. Add events structure and event handler.
